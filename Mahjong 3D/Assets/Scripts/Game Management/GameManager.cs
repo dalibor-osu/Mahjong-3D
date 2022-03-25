@@ -138,6 +138,8 @@ public class GameManager : MonoBehaviour
     public void CheckPlayerCall(int playerDiscarded, Tile discardedTile)
     {
         int playerIndex = 0;
+        int chiPlayer = playerDiscarded - 1 < 0 ? 3 : playerDiscarded - 1;
+        
         foreach (var player in playerManager.players)
         {
             if (playerIndex == playerDiscarded)
@@ -145,9 +147,10 @@ public class GameManager : MonoBehaviour
                 playerIndex++;
                 continue;
             }
-
             playerManager.CheckPlayerPon(player, discardedTile, playerIndex);
             playerIndex++;
         }
+        
+        if (discardedTile is Tile.SuitedTile) playerManager.CheckPlayerChi(playerManager.players[chiPlayer], discardedTile, chiPlayer);
     }
 }

@@ -52,7 +52,7 @@ public class TileProperties : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (isDiscarded || playerIndex != 0 || roundManager.gameEnd) return;
+        if (isDiscarded || playerIndex != 0 || roundManager.gameEnd || roundManager.currentPlayer != playerIndex) return;
         tileManager.DiscardTile(tile, gameObject, playerIndex);
         MoveDiscarded();
     }

@@ -7,7 +7,7 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public Player[] players = {new Player(), new Player(), new Player(), new Player()};
-    
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -17,7 +17,7 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Start()
     {
-        
+
     }
 
     private void InitializeLists()
@@ -36,7 +36,7 @@ public class PlayerManager : MonoBehaviour
             case 2:
                 Debug.Log("Player " + playerIndex + ": PON!");
                 break;
-            
+
             case 3:
                 Debug.Log("Player " + playerIndex + ": KAN!");
                 break;
@@ -45,20 +45,78 @@ public class PlayerManager : MonoBehaviour
 
     public void CheckPlayerChi(Player player, Tile discardedTile, int playerIndex)
     {
-        string tileNameNoDigits;
-        List<Tile> suitTiles = new List<Tile>();
-        tileNameNoDigits = Regex.Replace(discardedTile.tileName, @"[\d-]", string.Empty);
+        List<Tile> suitTiles;
 
-        foreach (var tile in player.hand)
+        switch (discardedTile)
         {
-            if (tile.tileName.Contains(tileNameNoDigits)) suitTiles.Add(tile);
+            case Tile.Bamboo bamboo:
+                suitTiles = player.hand.Where(t => t is Tile.Bamboo).ToList();
+                break;
+
+            case Tile.Man man:
+                suitTiles = player.hand.Where(t => t is Tile.Man).ToList();
+                break;
+
+            case Tile.Circle circle:
+                suitTiles = player.hand.Where(t => t is Tile.Circle).ToList();
+                break;
+
+            default:
+                return;
         }
 
-        if (ContainsChi(suitTiles, discardedTile)) Debug.Log("Player " + playerIndex + ": CHI!");
+        int chiCount = ContainsChi(suitTiles, ((Tile.SuitedTile) discardedTile).suitRank);
+        if (chiCount > 0)
+        {
+            Debug.Log("Player " + playerIndex + " can call CHI! " + chiCount + " times!");
+        }
     }
 
-    private bool ContainsChi(List<Tile> tiles, Tile discardedTile)
+    private int ContainsChi(List<Tile> tiles, int discardedTileRank)
     {
-        return false;
+        List<int> ranks = new List<int>();
+        int chiCount = 0;
+
+        foreach (var tile in tiles)
+        {
+            ranks.Add(((Tile.SuitedTile) tile).suitRank);
+        }
+
+        if (ranks.Contains(discardedTileRank - 2) && ranks.Contains(discardedTileRank - 1)) chiCount++;
+        if (ranks.Contains(discardedTileRank - 1) && ranks.Contains(discardedTileRank + 1)) chiCount++;
+        if (ranks.Contains(discardedTileRank + 1) && ranks.Contains(discardedTileRank + 2)) chiCount++;
+
+        return chiCount;
     }
+
+    public void CallPon(Tile ponTile, Player player)
+    {
+
+    }
+
+    public void CallChi()
+    {
+
+    }
+
+    public void CallKan()
+    {
+
+    }
+
+    public void CallRon()
+    {
+
+    }
+
+    public void CallTsumo()
+    {
+
+    }
+
+    public void CallDraw()
+    {
+        
+    }
+
 }
